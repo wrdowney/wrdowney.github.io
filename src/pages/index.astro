@@ -1,0 +1,36 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>👋 Hi, I'm Will!</h1>
+			<p>
+				I work as a Software Engineer at Capital One, where I am involved in the iOS app team,
+				building and maintaining the Capital One mobile banking app.
+			</p>
+			<p>
+				Before working at Capital One, I was a student at Virginia Tech in Blacksburg, VA where I 
+				graduated with both a Bachelor's and Master's degree in Computer Science. While at Virginia Tech, I focused
+				mostly on computer systems and parellel programming. During my summers I had a couple internships at FCPS and
+				Capital One. 
+			</p>
+			<p>
+				Before joining Capital One, I had zero iOS development experience and my mobile experience was limited to
+				a single Android development class. Fortunately, I was eventually able to learn from many of the great resources
+				online. My goal is to help out others who share my interests by helping them avoid the mistakes I made along 
+				the way.
+			</p>
+		</main>
+		<Footer />
+	</body>
+</html>
