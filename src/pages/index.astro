@@ -41,14 +41,8 @@ const colorClasses: Record<string, { light: string; dark: string }> = {
   <Header />
   
   <main class="flex-1">
-    <!-- Hero Section with gradient background -->
-    <section class="relative py-20 md:py-32 overflow-hidden">
-      <!-- Subtle gradient background -->
-      <div class="absolute inset-0 bg-gradient-to-br from-blue-50/80 via-background to-orange-50/60 dark:from-blue-950/30 dark:via-background dark:to-orange-950/20 -z-10"></div>
-      <!-- Decorative blob -->
-      <div class="absolute top-20 right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl -z-10 dark:bg-primary/10"></div>
-      <div class="absolute bottom-10 left-10 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl -z-10 dark:bg-orange-500/5"></div>
-      
+    <!-- Hero Section -->
+    <section class="py-20 md:py-32">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl">
           <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6">
@@ -82,7 +76,7 @@ const colorClasses: Record<string, { light: string; dark: string }> = {
     </section>
     
     <!-- Tech Stack -->
-    <section class="py-16 border-y border-border bg-gradient-to-b from-muted/30 to-background">
+    <section class="py-16 border-y border-border">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-semibold mb-8 text-center">Technologies & Skills</h2>
         <div class="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
@@ -152,7 +146,7 @@ const colorClasses: Record<string, { light: string; dark: string }> = {
     
     <!-- Latest Talks -->
     {latestTalks.length > 0 && (
-      <section class="py-16 border-t border-border bg-muted/50">
+      <section class="py-16 border-t border-border">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex items-center justify-between mb-8">
             <h2 class="text-2xl font-semibold">Recent Talks</h2>
@@ -208,10 +202,7 @@ const colorClasses: Record<string, { light: string; dark: string }> = {
     )}
     
     <!-- CTA Section -->
-    <section class="py-20 relative overflow-hidden">
-      <!-- Subtle background pattern -->
-      <div class="absolute inset-0 bg-gradient-to-tr from-primary/5 via-background to-orange-400/5 dark:from-primary/10 dark:via-background dark:to-orange-500/10 -z-10"></div>
-      
+    <section class="py-20">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="max-w-2xl mx-auto text-center">
           <h2 class="text-3xl font-bold mb-4">Let's Connect</h2>
