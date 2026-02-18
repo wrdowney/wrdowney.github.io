@@ -10,6 +10,15 @@ const sortedPosts = posts.sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'
 
 // Get all unique tags
 const allTags = [...new Set((posts as CollectionEntry<'blog'>[]).flatMap(post => post.data.tags))].sort() as string[];
+
+// Serialize posts data for JavaScript
+const postsData = sortedPosts.map((post: CollectionEntry<'blog'>) => ({
+  slug: post.slug,
+  title: post.data.title,
+  description: post.data.description,
+  pubDate: post.data.pubDate.toISOString(),
+  tags: post.data.tags,
+}));
 ---
 
 <Layout title="Blog - Will Downey" description="Thoughts on iOS development, SwiftUI, and mobile engineering">
@@ -26,24 +35,46 @@ const allTags = [...new Set((posts as CollectionEntry<'blog'>[]).flatMap(post =>
           </p>
         </div>
         
-        <!-- Tags -->
+        <!-- Tags Filter -->
         {allTags.length > 0 && (
           <div class="mb-12">
-            <h2 class="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">Topics</h2>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-sm font-medium text-muted-foreground uppercase tracking-wider">Topics</h2>
+              <button
+                id="clear-filter"
+                class="hidden text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+              >
+                Clear filter
+              </button>
+            </div>
+            <div class="flex flex-wrap gap-2" id="tags-container">
               {allTags.map((tag: string) => (
-                <span class="px-3 py-1.5 text-sm font-medium bg-muted text-muted-foreground rounded-lg">
+                <button
+                  class="tag-filter px-3 py-1.5 text-sm font-medium bg-muted text-muted-foreground rounded-lg hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer"
+                  data-tag={tag}
+                >
                   {tag}
-                </span>
+                </button>
               ))}
             </div>
           </div>
         )}
         
+        <!-- Filter Status -->
+        <div id="filter-status" class="hidden mb-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
+          <p class="text-sm text-muted-foreground">
+            Showing posts tagged with <span id="active-filter" class="font-semibold text-primary"></span>
+            <span id="result-count" class="ml-2"></span>
+          </p>
+        </div>
+        
         <!-- Posts List -->
-        <div class="space-y-8">
+        <div class="space-y-8" id="posts-container">
           {sortedPosts.map((post: CollectionEntry<'blog'>) => (
-            <article class="group p-6 rounded-xl border border-border bg-card hover:border-primary/50 transition-colors">
+            <article 
+              class="post-item group p-6 rounded-xl border border-border bg-card hover:border-primary/50 transition-colors"
+              data-tags={JSON.stringify(post.data.tags)}
+            >
               <div class="flex flex-wrap gap-2 mb-3">
                 {post.data.tags.map((tag: string) => (
                   <span class="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded">
@@ -79,6 +110,17 @@ const allTags = [...new Set((posts as CollectionEntry<'blog'>[]).flatMap(post =>
         </div>
         
         <!-- Empty State -->
+        <div id="empty-state" class="hidden text-center py-20">
+          <p class="text-muted-foreground mb-4">No posts found with this tag.</p>
+          <button
+            id="empty-clear-filter"
+            class="text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+          >
+            Clear filter
+          </button>
+        </div>
+        
+        <!-- No Posts State (initial) -->
         {sortedPosts.length === 0 && (
           <div class="text-center py-20">
             <p class="text-muted-foreground mb-4">No posts yet.</p>
@@ -105,4 +147,124 @@ const allTags = [...new Set((posts as CollectionEntry<'blog'>[]).flatMap(post =>
   </main>
   
   <Footer />
+  
+  <script define:vars={{ postsData }}>
+    // Get DOM elements
+    const tagButtons = document.querySelectorAll('.tag-filter');
+    const postItems = document.querySelectorAll('.post-item');
+    const clearFilterBtn = document.getElementById('clear-filter');
+    const emptyClearFilterBtn = document.getElementById('empty-clear-filter');
+    const filterStatus = document.getElementById('filter-status');
+    const activeFilterSpan = document.getElementById('active-filter');
+    const resultCountSpan = document.getElementById('result-count');
+    const emptyState = document.getElementById('empty-state');
+    const postsContainer = document.getElementById('posts-container');
+    
+    let currentFilter = null;
+    
+    // Function to filter posts
+    function filterPosts(tag) {
+      currentFilter = tag;
+      let visibleCount = 0;
+      
+      postItems.forEach(item => {
+        const itemTags = JSON.parse(item.dataset.tags || '[]');
+        if (itemTags.includes(tag)) {
+          item.style.display = '';
+          visibleCount++;
+        } else {
+          item.style.display = 'none';
+        }
+      });
+      
+      // Update UI
+      updateFilterUI(tag, visibleCount);
+      
+      // Update URL
+      const url = new URL(window.location);
+      url.searchParams.set('tag', tag);
+      window.history.pushState({}, '', url);
+    }
+    
+    // Function to clear filter
+    function clearFilter() {
+      currentFilter = null;
+      
+      postItems.forEach(item => {
+        item.style.display = '';
+      });
+      
+      // Update UI
+      tagButtons.forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-primary-foreground');
+        btn.classList.add('bg-muted', 'text-muted-foreground');
+      });
+      
+      clearFilterBtn?.classList.add('hidden');
+      filterStatus?.classList.add('hidden');
+      emptyState?.classList.add('hidden');
+      postsContainer?.classList.remove('hidden');
+      
+      // Update URL
+      const url = new URL(window.location);
+      url.searchParams.delete('tag');
+      window.history.pushState({}, '', url);
+    }
+    
+    // Function to update filter UI
+    function updateFilterUI(tag, count) {
+      // Update tag buttons
+      tagButtons.forEach(btn => {
+        if (btn.dataset.tag === tag) {
+          btn.classList.remove('bg-muted', 'text-muted-foreground');
+          btn.classList.add('bg-primary', 'text-primary-foreground');
+        } else {
+          btn.classList.remove('bg-primary', 'text-primary-foreground');
+          btn.classList.add('bg-muted', 'text-muted-foreground');
+        }
+      });
+      
+      // Show/hide clear button
+      clearFilterBtn?.classList.remove('hidden');
+      
+      // Update filter status
+      if (filterStatus && activeFilterSpan && resultCountSpan) {
+        filterStatus.classList.remove('hidden');
+        activeFilterSpan.textContent = tag;
+        resultCountSpan.textContent = `(${count} post${count !== 1 ? 's' : ''})`;
+      }
+      
+      // Show empty state if no results
+      if (count === 0) {
+        postsContainer?.classList.add('hidden');
+        emptyState?.classList.remove('hidden');
+      } else {
+        postsContainer?.classList.remove('hidden');
+        emptyState?.classList.add('hidden');
+      }
+    }
+    
+    // Add click handlers to tag buttons
+    tagButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tag = button.dataset.tag;
+        if (currentFilter === tag) {
+          clearFilter();
+        } else {
+          filterPosts(tag);
+        }
+      });
+    });
+    
+    // Add click handlers to clear buttons
+    clearFilterBtn?.addEventListener('click', clearFilter);
+    emptyClearFilterBtn?.addEventListener('click', clearFilter);
+    
+    // Check URL for existing filter on page load
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialTag = urlParams.get('tag');
+    if (initialTag) {
+      filterPosts(initialTag);
+    }
+  </script>
 </Layout>
