@@ -15,23 +15,40 @@ const sortedTalks = talks.sort((a: CollectionEntry<'talks'>, b: CollectionEntry<
 const latestTalks = sortedTalks.slice(0, 2);
 
 const techStack = [
-  { name: 'Swift', category: 'Language' },
-  { name: 'SwiftUI', category: 'Framework' },
-  { name: 'UIKit', category: 'Framework' },
-  { name: 'Platform Architecture', category: 'Architecture' },
-  { name: 'XCTest', category: 'Testing' },
-  { name: 'Swift Testing', category: 'Testing' },
-  { name: 'Xcode', category: 'Tools' },
-  { name: 'Build Systems', category: 'Tools' },
+  { name: 'Swift', category: 'Language', color: 'orange' },
+  { name: 'SwiftUI', category: 'Framework', color: 'blue' },
+  { name: 'UIKit', category: 'Framework', color: 'indigo' },
+  { name: 'Platform Architecture', category: 'Architecture', color: 'purple' },
+  { name: 'XCTest', category: 'Testing', color: 'green' },
+  { name: 'Swift Testing', category: 'Testing', color: 'emerald' },
+  { name: 'Xcode', category: 'Tools', color: 'cyan' },
+  { name: 'Build Systems', category: 'Tools', color: 'slate' },
 ];
+
+const colorClasses: Record<string, { light: string; dark: string }> = {
+  orange: { light: 'bg-orange-100 text-orange-700 border-orange-200 hover:border-orange-300', dark: 'dark:bg-orange-950/50 dark:text-orange-300 dark:border-orange-800 dark:hover:border-orange-700' },
+  blue: { light: 'bg-blue-100 text-blue-700 border-blue-200 hover:border-blue-300', dark: 'dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800 dark:hover:border-blue-700' },
+  indigo: { light: 'bg-indigo-100 text-indigo-700 border-indigo-200 hover:border-indigo-300', dark: 'dark:bg-indigo-950/50 dark:text-indigo-300 dark:border-indigo-800 dark:hover:border-indigo-700' },
+  purple: { light: 'bg-purple-100 text-purple-700 border-purple-200 hover:border-purple-300', dark: 'dark:bg-purple-950/50 dark:text-purple-300 dark:border-purple-800 dark:hover:border-purple-700' },
+  green: { light: 'bg-green-100 text-green-700 border-green-200 hover:border-green-300', dark: 'dark:bg-green-950/50 dark:text-green-300 dark:border-green-800 dark:hover:border-green-700' },
+  emerald: { light: 'bg-emerald-100 text-emerald-700 border-emerald-200 hover:border-emerald-300', dark: 'dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800 dark:hover:border-emerald-700' },
+  cyan: { light: 'bg-cyan-100 text-cyan-700 border-cyan-200 hover:border-cyan-300', dark: 'dark:bg-cyan-950/50 dark:text-cyan-300 dark:border-cyan-800 dark:hover:border-cyan-700' },
+  slate: { light: 'bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-300', dark: 'dark:bg-slate-800/50 dark:text-slate-300 dark:border-slate-700 dark:hover:border-slate-600' },
+};
 ---
 
 <Layout title="Will Downey - iOS Engineer">
   <Header />
   
   <main class="flex-1">
-    <!-- Hero Section -->
-    <section class="py-20 md:py-32">
+    <!-- Hero Section with gradient background -->
+    <section class="relative py-20 md:py-32 overflow-hidden">
+      <!-- Subtle gradient background -->
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-50/80 via-background to-orange-50/60 dark:from-blue-950/30 dark:via-background dark:to-orange-950/20 -z-10"></div>
+      <!-- Decorative blob -->
+      <div class="absolute top-20 right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl -z-10 dark:bg-primary/10"></div>
+      <div class="absolute bottom-10 left-10 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl -z-10 dark:bg-orange-500/5"></div>
+      
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl">
           <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6">
@@ -49,13 +66,13 @@ const techStack = [
           <div class="flex flex-wrap gap-4">
             <a
               href="/about"
-              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-500 rounded-lg hover:from-blue-700 hover:to-blue-600 transition-all shadow-md hover:shadow-lg dark:from-blue-500 dark:to-blue-400 dark:hover:from-blue-400 dark:hover:to-blue-300"
             >
               About Me
             </a>
             <a
               href="/blog"
-              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-accent transition-colors"
+              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-foreground bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm"
             >
               Read Blog
             </a>
@@ -65,18 +82,21 @@ const techStack = [
     </section>
     
     <!-- Tech Stack -->
-    <section class="py-16 border-y border-border bg-muted/50">
+    <section class="py-16 border-y border-border bg-gradient-to-b from-muted/30 to-background">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-semibold mb-8 text-center">Technologies & Skills</h2>
         <div class="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
-          {techStack.map(tech => (
-            <span
-              class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-background border border-border hover:border-primary/50 transition-colors"
-              title={tech.category}
-            >
-              {tech.name}
-            </span>
-          ))}
+          {techStack.map(tech => {
+            const colors = colorClasses[tech.color];
+            return (
+              <span
+                class={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 hover:scale-105 ${colors.light} ${colors.dark}`}
+                title={tech.category}
+              >
+                {tech.name}
+              </span>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -188,7 +208,10 @@ const techStack = [
     )}
     
     <!-- CTA Section -->
-    <section class="py-20">
+    <section class="py-20 relative overflow-hidden">
+      <!-- Subtle background pattern -->
+      <div class="absolute inset-0 bg-gradient-to-tr from-primary/5 via-background to-orange-400/5 dark:from-primary/10 dark:via-background dark:to-orange-500/10 -z-10"></div>
+      
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="max-w-2xl mx-auto text-center">
           <h2 class="text-3xl font-bold mb-4">Let's Connect</h2>
@@ -201,7 +224,7 @@ const techStack = [
               href="https://www.linkedin.com/in/widowney/"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
             >
               Connect on LinkedIn
             </a>
@@ -209,7 +232,7 @@ const techStack = [
               href="https://github.com/wrdowney"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-accent transition-colors"
+              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-foreground bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm hover:shadow"
             >
               View GitHub
             </a>
