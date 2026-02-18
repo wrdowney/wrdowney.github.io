@@ -1,0 +1,215 @@
+---
+import Layout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const experience = [
+  {
+    company: 'Capital One',
+    companyUrl: 'https://www.capitalone.com/',
+    role: 'Associate Software Engineer',
+    period: 'Aug 2024 - Present',
+    location: 'McLean, VA',
+    description: 'Building iOS applications at scale. Focusing on SwiftUI architecture, platform engineering, and build system optimization.',
+  },
+  {
+    company: 'Capital One',
+    companyUrl: 'https://www.capitalone.com/',
+    role: 'Software Engineer Intern',
+    period: 'Jun 2023 - Aug 2023',
+    location: 'McLean, VA',
+    description: 'Developed mobile features using Swift and SwiftUI. Collaborated on architecture decisions and testing strategies.',
+  },
+  {
+    company: 'Virginia Tech',
+    companyUrl: 'https://www.vt.edu/',
+    role: 'Undergraduate Teaching Assistant',
+    period: 'Aug 2022 - Dec 2022',
+    location: 'Blacksburg, VA',
+    description: 'Assisted in teaching Data Structures and Algorithms. Held office hours and graded assignments.',
+  },
+  {
+    company: 'Virginia Tech',
+    companyUrl: 'https://www.vt.edu/',
+    role: 'Undergraduate Research Assistant',
+    period: 'Jan 2022 - May 2022',
+    location: 'Blacksburg, VA',
+    description: 'Conducted research in computer science, focusing on algorithm optimization and data analysis.',
+  },
+];
+
+const education = [
+  {
+    school: 'Virginia Tech',
+    schoolUrl: 'https://www.vt.edu/',
+    degree: "Master's degree in Computer Science",
+    period: '2023 - 2025 (expected)',
+  },
+  {
+    school: 'Virginia Tech',
+    schoolUrl: 'https://www.vt.edu/',
+    degree: "Bachelor's degree in Computer Science",
+    period: '2020 - 2023',
+  },
+];
+
+const skills = {
+  languages: ['Swift', 'Objective-C', 'Python'],
+  frameworks: ['SwiftUI', 'UIKit', 'Combine', 'Core Data'],
+  architecture: ['MVVM', 'VIPER', 'Clean Architecture', 'Platform Architecture'],
+  testing: ['XCTest', 'Swift Testing', 'XCUITest', 'Test-Driven Development'],
+  tools: ['Xcode', 'Git', 'GitHub Actions', 'Build Systems', 'CI/CD'],
+  other: ['Performance Optimization', 'Memory Management', 'Concurrency', 'App Architecture'],
+};
+---
+
+<Layout title="About - Will Downey">
+  <Header />
+  
+  <main class="flex-1 py-16">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mx-auto">
+        <!-- Header -->
+        <div class="mb-12">
+          <h1 class="text-4xl font-bold mb-4">About Me</h1>
+          <p class="text-xl text-muted-foreground leading-relaxed">
+            I'm an iOS Engineer passionate about building high-quality mobile applications. 
+            Currently at Capital One, I focus on SwiftUI architecture, platform engineering, 
+            and creating exceptional user experiences at scale.
+          </p>
+        </div>
+        
+        <!-- Skills -->
+        <section class="mb-16">
+          <h2 class="text-2xl font-semibold mb-6">Skills & Expertise</h2>
+          
+          <div class="space-y-6">
+            <div>
+              <h3 class="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">Languages</h3>
+              <div class="flex flex-wrap gap-2">
+                {skills.languages.map((skill: string) => (
+                  <span class="px-3 py-1.5 text-sm font-medium bg-primary/10 text-primary rounded-lg">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h3 class="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">Frameworks</h3>
+              <div class="flex flex-wrap gap-2">
+                {skills.frameworks.map((skill: string) => (
+                  <span class="px-3 py-1.5 text-sm font-medium bg-muted text-muted-foreground rounded-lg">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h3 class="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">Architecture</h3>
+              <div class="flex flex-wrap gap-2">
+                {skills.architecture.map((skill: string) => (
+                  <span class="px-3 py-1.5 text-sm font-medium bg-muted text-muted-foreground rounded-lg">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h3 class="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">Testing</h3>
+              <div class="flex flex-wrap gap-2">
+                {skills.testing.map((skill: string) => (
+                  <span class="px-3 py-1.5 text-sm font-medium bg-primary/10 text-primary rounded-lg">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h3 class="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">Tools</h3>
+              <div class="flex flex-wrap gap-2">
+                {skills.tools.map((skill: string) => (
+                  <span class="px-3 py-1.5 text-sm font-medium bg-muted text-muted-foreground rounded-lg">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h3 class="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">Other</h3>
+              <div class="flex flex-wrap gap-2">
+                {skills.other.map((skill: string) => (
+                  <span class="px-3 py-1.5 text-sm font-medium bg-muted text-muted-foreground rounded-lg">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Experience -->
+        <section class="mb-16">
+          <h2 class="text-2xl font-semibold mb-6">Experience</h2>
+          <div class="space-y-8">
+            {experience.map((job) => (
+              <div class="relative pl-8 border-l-2 border-border">
+                <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
+                <div class="mb-1">
+                  <h3 class="text-lg font-semibold">
+                    <a 
+                      href={job.companyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="hover:text-primary transition-colors"
+                    >
+                      {job.company}
+                    </a>
+                  </h3>
+                  <p class="text-primary font-medium">{job.role}</p>
+                </div>
+                <p class="text-sm text-muted-foreground mb-2">
+                  {job.period} | {job.location}
+                </p>
+                <p class="text-muted-foreground">
+                  {job.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+        
+        <!-- Education -->
+        <section>
+          <h2 class="text-2xl font-semibold mb-6">Education</h2>
+          <div class="space-y-6">
+            {education.map((edu) => (
+              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 p-4 rounded-lg border border-border bg-card">
+                <div>
+                  <h3 class="font-semibold">
+                    <a 
+                      href={edu.schoolUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="hover:text-primary transition-colors"
+                    >
+                      {edu.school}
+                    </a>
+                  </h3>
+                  <p class="text-muted-foreground">{edu.degree}</p>
+                </div>
+                <span class="text-sm text-muted-foreground shrink-0">{edu.period}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</Layout>

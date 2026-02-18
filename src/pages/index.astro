@@ -1,0 +1,223 @@
+---
+import Layout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+import type { CollectionEntry } from 'astro:content';
+
+const posts = await getCollection('blog');
+const sortedPosts = posts.sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const latestPosts = sortedPosts.slice(0, 3);
+
+const talks = await getCollection('talks');
+const sortedTalks = talks.sort((a: CollectionEntry<'talks'>, b: CollectionEntry<'talks'>) => b.data.date.valueOf() - a.data.date.valueOf());
+const latestTalks = sortedTalks.slice(0, 2);
+
+const techStack = [
+  { name: 'Swift', category: 'Language' },
+  { name: 'SwiftUI', category: 'Framework' },
+  { name: 'UIKit', category: 'Framework' },
+  { name: 'Platform Architecture', category: 'Architecture' },
+  { name: 'XCTest', category: 'Testing' },
+  { name: 'Swift Testing', category: 'Testing' },
+  { name: 'Xcode', category: 'Tools' },
+  { name: 'Build Systems', category: 'Tools' },
+];
+---
+
+<Layout title="Will Downey - iOS Engineer">
+  <Header />
+  
+  <main class="flex-1">
+    <!-- Hero Section -->
+    <section class="py-20 md:py-32">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl">
+          <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+            Hi, I'm <span class="text-primary">Will</span>
+          </h1>
+          <p class="text-xl md:text-2xl text-muted-foreground mb-6">
+            iOS Engineer at Capital One
+          </p>
+          <p class="text-lg text-muted-foreground mb-8 leading-relaxed">
+            I specialize in building performant mobile applications with SwiftUI, 
+            architecting scalable platform solutions, and optimizing build systems. 
+            Currently focused on creating exceptional iOS experiences and sharing 
+            knowledge through writing and speaking.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <a
+              href="/about"
+              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              About Me
+            </a>
+            <a
+              href="/blog"
+              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-accent transition-colors"
+            >
+              Read Blog
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Tech Stack -->
+    <section class="py-16 border-y border-border bg-muted/50">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-semibold mb-8 text-center">Technologies & Skills</h2>
+        <div class="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
+          {techStack.map(tech => (
+            <span
+              class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-background border border-border hover:border-primary/50 transition-colors"
+              title={tech.category}
+            >
+              {tech.name}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+    
+    <!-- Latest Blog Posts -->
+    {latestPosts.length > 0 && (
+      <section class="py-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-semibold">Latest Posts</h2>
+            <a
+              href="/blog"
+              class="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+            >
+              View all →
+            </a>
+          </div>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {latestPosts.map((post: CollectionEntry<'blog'>) => (
+              <article class="group flex flex-col p-6 rounded-xl border border-border bg-card hover:border-primary/50 transition-colors">
+                <div class="flex-1">
+                  <div class="flex flex-wrap gap-2 mb-3">
+                    {post.data.tags.slice(0, 3).map((tag: string) => (
+                      <span class="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                    <a href={`/blog/${post.slug}/`}>
+                      {post.data.title}
+                    </a>
+                  </h3>
+                  <p class="text-sm text-muted-foreground line-clamp-3">
+                    {post.data.description}
+                  </p>
+                </div>
+                <div class="mt-4 pt-4 border-t border-border">
+                  <time class="text-xs text-muted-foreground" datetime={post.data.pubDate.toISOString()}>
+                    {post.data.pubDate.toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </time>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+    
+    <!-- Latest Talks -->
+    {latestTalks.length > 0 && (
+      <section class="py-16 border-t border-border bg-muted/50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-semibold">Recent Talks</h2>
+            <a
+              href="/talks"
+              class="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+            >
+              View all →
+            </a>
+          </div>
+          <div class="grid gap-6 md:grid-cols-2">
+            {latestTalks.map((talk: CollectionEntry<'talks'>) => (
+              <article class="group flex flex-col p-6 rounded-xl border border-border bg-card hover:border-primary/50 transition-colors">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex flex-wrap gap-2">
+                    {talk.data.tags.slice(0, 3).map((tag: string) => (
+                      <span class="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  {talk.data.upcoming && (
+                    <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">
+                      Upcoming
+                    </span>
+                  )}
+                </div>
+                <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                  <a href={`/talks/${talk.slug}/`}>
+                    {talk.data.title}
+                  </a>
+                </h3>
+                <p class="text-sm text-muted-foreground mb-4 line-clamp-2">
+                  {talk.data.description}
+                </p>
+                <div class="mt-auto pt-4 border-t border-border">
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-muted-foreground">{talk.data.venue}</span>
+                    <time class="text-muted-foreground" datetime={talk.data.date.toISOString()}>
+                      {talk.data.date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </time>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+    
+    <!-- CTA Section -->
+    <section class="py-20">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl mx-auto text-center">
+          <h2 class="text-3xl font-bold mb-4">Let's Connect</h2>
+          <p class="text-lg text-muted-foreground mb-8">
+            Interested in discussing iOS development, SwiftUI architecture, or mobile platform engineering? 
+            I'd love to hear from you.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <a
+              href="https://www.linkedin.com/in/widowney/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Connect on LinkedIn
+            </a>
+            <a
+              href="https://github.com/wrdowney"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-accent transition-colors"
+            >
+              View GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <Footer />
+</Layout>
