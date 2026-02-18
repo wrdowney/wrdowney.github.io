@@ -50,7 +50,7 @@ const postsData = sortedPosts.map((post: CollectionEntry<'blog'>) => ({
             <div class="flex flex-wrap gap-2" id="tags-container">
               {allTags.map((tag: string) => (
                 <button
-                  class="tag-filter px-3 py-1.5 text-sm font-medium bg-muted text-muted-foreground rounded-lg hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer"
+                  class="tag-filter inline-flex items-center px-4 py-1.5 text-sm font-medium border rounded-full transition-all duration-200 cursor-pointer hover:shadow-sm"
                   data-tag={tag}
                 >
                   {tag}
@@ -194,10 +194,9 @@ const postsData = sortedPosts.map((post: CollectionEntry<'blog'>) => ({
         item.style.display = '';
       });
       
-      // Update UI
+      // Update UI - remove active class from all badges
       tagButtons.forEach(btn => {
-        btn.classList.remove('bg-primary', 'text-primary-foreground');
-        btn.classList.add('bg-muted', 'text-muted-foreground');
+        btn.classList.remove('active');
       });
       
       clearFilterBtn?.classList.add('hidden');
@@ -213,14 +212,12 @@ const postsData = sortedPosts.map((post: CollectionEntry<'blog'>) => ({
     
     // Function to update filter UI
     function updateFilterUI(tag, count) {
-      // Update tag buttons
+      // Update tag buttons - active badge gets 'active' class
       tagButtons.forEach(btn => {
         if (btn.dataset.tag === tag) {
-          btn.classList.remove('bg-muted', 'text-muted-foreground');
-          btn.classList.add('bg-primary', 'text-primary-foreground');
+          btn.classList.add('active');
         } else {
-          btn.classList.remove('bg-primary', 'text-primary-foreground');
-          btn.classList.add('bg-muted', 'text-muted-foreground');
+          btn.classList.remove('active');
         }
       });
       

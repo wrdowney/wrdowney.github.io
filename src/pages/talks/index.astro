@@ -44,7 +44,7 @@ const allTags = [...new Set((talks as CollectionEntry<'talks'>[]).flatMap(talk =
             <div class="flex flex-wrap gap-2" id="tags-container">
               {allTags.map((tag: string) => (
                 <button
-                  class="tag-filter px-3 py-1.5 text-sm font-medium bg-muted text-muted-foreground rounded-lg hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer"
+                  class="tag-filter inline-flex items-center px-4 py-1.5 text-sm font-medium border rounded-full transition-all duration-200 cursor-pointer hover:shadow-sm"
                   data-tag={tag}
                 >
                   {tag}
@@ -280,10 +280,9 @@ const allTags = [...new Set((talks as CollectionEntry<'talks'>[]).flatMap(talk =
         htmlItem.style.display = '';
       });
       
-      // Update UI
+      // Update UI - remove active class from all badges
       tagButtons.forEach((btn: Element) => {
-        btn.classList.remove('bg-primary', 'text-primary-foreground');
-        btn.classList.add('bg-muted', 'text-muted-foreground');
+        btn.classList.remove('active');
       });
       
       clearFilterBtn?.classList.add('hidden');
@@ -316,15 +315,13 @@ const allTags = [...new Set((talks as CollectionEntry<'talks'>[]).flatMap(talk =
     function updateFilterUI(tag: string, upcomingCount: number, pastCount: number) {
       const totalCount = upcomingCount + pastCount;
       
-      // Update tag buttons
+      // Update tag buttons - active badge gets 'active' class
       tagButtons.forEach((btn: Element) => {
         const htmlBtn = btn as HTMLElement;
         if (htmlBtn.dataset.tag === tag) {
-          htmlBtn.classList.remove('bg-muted', 'text-muted-foreground');
-          htmlBtn.classList.add('bg-primary', 'text-primary-foreground');
+          htmlBtn.classList.add('active');
         } else {
-          htmlBtn.classList.remove('bg-primary', 'text-primary-foreground');
-          htmlBtn.classList.add('bg-muted', 'text-muted-foreground');
+          htmlBtn.classList.remove('active');
         }
       });
       

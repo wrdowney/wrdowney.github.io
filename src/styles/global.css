@@ -158,3 +158,31 @@ html {
   height: auto;
   border-radius: var(--radius);
 }
+
+/* Tag Filter Badges */
+.tag-filter {
+  border: 1px solid hsl(var(--border));
+  background-color: transparent;
+  color: hsl(var(--muted-foreground));
+}
+
+.tag-filter:hover {
+  border-color: hsl(var(--primary) / 0.5);
+  color: hsl(var(--primary));
+}
+
+.tag-filter.active {
+  background-color: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Dark mode specific styles for better contrast */
+.dark .tag-filter.active {
+  background-color: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  color: hsl(222.2 47.4% 11.2%); /* Dark text for better contrast */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+}
