@@ -1,237 +1,103 @@
 ---
-import Layout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { getCollection } from 'astro:content';
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import PostCard from "../components/PostCard.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import { siteConfig } from "../data/site";
 
-import type { CollectionEntry } from 'astro:content';
+const featuredPosts = (await getCollection("blog", ({ data }) => !data.draft && data.featured))
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+  .slice(0, 3);
 
-const posts = await getCollection('blog');
-const sortedPosts = posts.sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-const latestPosts = sortedPosts.slice(0, 3);
-
-const talks = await getCollection('talks');
-const sortedTalks = talks.sort((a: CollectionEntry<'talks'>, b: CollectionEntry<'talks'>) => b.data.date.valueOf() - a.data.date.valueOf());
-const latestTalks = sortedTalks.slice(0, 2);
-
-const techStack = [
-  { name: 'Swift', category: 'Language', color: 'orange' },
-  { name: 'SwiftUI', category: 'Framework', color: 'blue' },
-  { name: 'UIKit', category: 'Framework', color: 'indigo' },
-  { name: 'Platform Architecture', category: 'Architecture', color: 'purple' },
-  { name: 'XCTest', category: 'Testing', color: 'green' },
-  { name: 'Swift Testing', category: 'Testing', color: 'emerald' },
-  { name: 'Xcode', category: 'Tools', color: 'cyan' },
-  { name: 'Build Systems', category: 'Tools', color: 'slate' },
-];
-
-const colorClasses: Record<string, { light: string; dark: string }> = {
-  orange: { light: 'bg-orange-100 text-orange-700 border-orange-200 hover:border-orange-300', dark: 'dark:bg-orange-950/50 dark:text-orange-300 dark:border-orange-800 dark:hover:border-orange-700' },
-  blue: { light: 'bg-blue-100 text-blue-700 border-blue-200 hover:border-blue-300', dark: 'dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800 dark:hover:border-blue-700' },
-  indigo: { light: 'bg-indigo-100 text-indigo-700 border-indigo-200 hover:border-indigo-300', dark: 'dark:bg-indigo-950/50 dark:text-indigo-300 dark:border-indigo-800 dark:hover:border-indigo-700' },
-  purple: { light: 'bg-purple-100 text-purple-700 border-purple-200 hover:border-purple-300', dark: 'dark:bg-purple-950/50 dark:text-purple-300 dark:border-purple-800 dark:hover:border-purple-700' },
-  green: { light: 'bg-green-100 text-green-700 border-green-200 hover:border-green-300', dark: 'dark:bg-green-950/50 dark:text-green-300 dark:border-green-800 dark:hover:border-green-700' },
-  emerald: { light: 'bg-emerald-100 text-emerald-700 border-emerald-200 hover:border-emerald-300', dark: 'dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800 dark:hover:border-emerald-700' },
-  cyan: { light: 'bg-cyan-100 text-cyan-700 border-cyan-200 hover:border-cyan-300', dark: 'dark:bg-cyan-950/50 dark:text-cyan-300 dark:border-cyan-800 dark:hover:border-cyan-700' },
-  slate: { light: 'bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-300', dark: 'dark:bg-slate-800/50 dark:text-slate-300 dark:border-slate-700 dark:hover:border-slate-600' },
-};
+const featuredProjects = (await getCollection("projects", ({ data }) => data.featured))
+  .sort((a, b) => b.data.year - a.data.year)
+  .slice(0, 2);
 ---
 
-<Layout title="Will Downey - iOS Engineer">
-  <Header />
-  
-  <main class="flex-1">
-    <!-- Hero Section -->
-    <section class="py-20 md:py-32">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-3xl">
-          <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-            Hi, I'm <span class="text-primary">Will</span>
-          </h1>
-          <p class="text-xl md:text-2xl text-muted-foreground mb-6">
-            iOS Engineer at Capital One
-          </p>
-          <p class="text-lg text-muted-foreground mb-8 leading-relaxed">
-            I specialize in building performant mobile applications with SwiftUI, 
-            architecting scalable platform solutions, and optimizing build systems. 
-            Currently focused on creating exceptional iOS experiences and sharing 
-            knowledge through writing and speaking.
-          </p>
-          <div class="flex flex-wrap gap-4">
-            <a
-              href="/about"
-              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-500 rounded-lg hover:from-blue-700 hover:to-blue-600 transition-all shadow-md hover:shadow-lg dark:from-blue-500 dark:to-blue-400 dark:hover:from-blue-400 dark:hover:to-blue-300"
-            >
-              About Me
-            </a>
-            <a
-              href="/blog"
-              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-foreground bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm"
-            >
-              Read Blog
-            </a>
-          </div>
-        </div>
+<BaseLayout>
+  <Hero
+    eyebrow={siteConfig.home.eyebrow}
+    title={siteConfig.home.title}
+    intro={siteConfig.home.intro}
+  />
+
+  <section class="section">
+    <div class="shell">
+      <SectionHeader
+        eyebrow="Featured writing"
+        title="Recent essays and writing"
+        copy="Longer writing on software, design, systems, and the habits that improve technical judgment over time."
+      />
+      <div class="home-grid">
+        {
+          featuredPosts.map((post) => (
+            <PostCard
+              href={`/blog/${post.id}/`}
+              title={post.data.title}
+              summary={post.data.summary}
+              date={post.data.publishedAt}
+              tags={post.data.tags}
+            />
+          ))
+        }
       </div>
-    </section>
-    
-    <!-- Tech Stack -->
-    <section class="py-16 border-y border-border">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-2xl font-semibold mb-8 text-center">Technologies & Skills</h2>
-        <div class="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
-          {techStack.map(tech => {
-            const colors = colorClasses[tech.color];
-            return (
-              <span
-                class={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 hover:scale-105 ${colors.light} ${colors.dark}`}
-                title={tech.category}
-              >
-                {tech.name}
-              </span>
-            );
-          })}
-        </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="shell">
+      <SectionHeader
+        eyebrow="Selected work"
+        title="Projects with a clear point of view"
+        copy="A compact set of case studies and experiments that show the kinds of systems, products, and interfaces I care about."
+      />
+      <div class="project-grid">
+        {
+          featuredProjects.map((project) => (
+            <ProjectCard
+              href={`/projects/${project.id}/`}
+              title={project.data.title}
+              summary={project.data.summary}
+              year={project.data.year}
+              status={project.data.status}
+              stack={project.data.stack}
+              links={project.data.links}
+            />
+          ))
+        }
       </div>
-    </section>
-    
-    <!-- Latest Blog Posts -->
-    {latestPosts.length > 0 && (
-      <section class="py-16">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center justify-between mb-8">
-            <h2 class="text-2xl font-semibold">Latest Posts</h2>
-            <a
-              href="/blog"
-              class="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-            >
-              View all →
-            </a>
-          </div>
-          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {latestPosts.map((post: CollectionEntry<'blog'>) => (
-              <article class="group flex flex-col p-6 rounded-xl border border-border bg-card hover:border-primary/50 transition-colors">
-                <div class="flex-1">
-                  <div class="flex flex-wrap gap-2 mb-3">
-                    {post.data.tags.slice(0, 3).map((tag: string) => (
-                      <span class="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
-                    <a href={`/blog/${post.slug}/`}>
-                      {post.data.title}
-                    </a>
-                  </h3>
-                  <p class="text-sm text-muted-foreground line-clamp-3">
-                    {post.data.description}
-                  </p>
-                </div>
-                <div class="mt-4 pt-4 border-t border-border">
-                  <time class="text-xs text-muted-foreground" datetime={post.data.pubDate.toISOString()}>
-                    {post.data.pubDate.toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </time>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-    )}
-    
-    <!-- Latest Talks -->
-    {latestTalks.length > 0 && (
-      <section class="py-16 border-t border-border">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center justify-between mb-8">
-            <h2 class="text-2xl font-semibold">Recent Talks</h2>
-            <a
-              href="/talks"
-              class="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-            >
-              View all →
-            </a>
-          </div>
-          <div class="grid gap-6 md:grid-cols-2">
-            {latestTalks.map((talk: CollectionEntry<'talks'>) => (
-              <article class="group flex flex-col p-6 rounded-xl border border-border bg-card hover:border-primary/50 transition-colors">
-                <div class="flex items-start justify-between mb-3">
-                  <div class="flex flex-wrap gap-2">
-                    {talk.data.tags.slice(0, 3).map((tag: string) => (
-                      <span class="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  {talk.data.upcoming && (
-                    <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">
-                      Upcoming
-                    </span>
-                  )}
-                </div>
-                <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
-                  <a href={`/talks/${talk.slug}/`}>
-                    {talk.data.title}
-                  </a>
-                </h3>
-                <p class="text-sm text-muted-foreground mb-4 line-clamp-2">
-                  {talk.data.description}
-                </p>
-                <div class="mt-auto pt-4 border-t border-border">
-                  <div class="flex items-center justify-between text-sm">
-                    <span class="text-muted-foreground">{talk.data.venue}</span>
-                    <time class="text-muted-foreground" datetime={talk.data.date.toISOString()}>
-                      {talk.data.date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </time>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-    )}
-    
-    <!-- CTA Section -->
-    <section class="py-20">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-2xl mx-auto text-center">
-          <h2 class="text-3xl font-bold mb-4">Let's Connect</h2>
-          <p class="text-lg text-muted-foreground mb-8">
-            Interested in discussing iOS development, SwiftUI architecture, or mobile platform engineering? 
-            I'd love to hear from you.
-          </p>
-          <div class="flex flex-wrap justify-center gap-4">
-            <a
-              href="https://www.linkedin.com/in/widowney/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
-            >
-              Connect on LinkedIn
-            </a>
-            <a
-              href="https://github.com/wrdowney"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-foreground bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm hover:shadow"
-            >
-              View GitHub
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-  
-  <Footer />
-</Layout>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .home-grid,
+  .project-grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .home-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .project-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .section--tight {
+    padding-top: 0;
+  }
+
+  @media (max-width: 980px) {
+    .home-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .project-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

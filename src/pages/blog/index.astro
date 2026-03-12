@@ -1,267 +1,49 @@
 ---
-import Layout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import { getCollection } from 'astro:content';
-import type { CollectionEntry } from 'astro:content';
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import SectionHeader from "../../components/SectionHeader.astro";
 
-const posts = await getCollection('blog');
-const sortedPosts = posts.sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-// Get all unique tags
-const allTags = [...new Set((posts as CollectionEntry<'blog'>[]).flatMap(post => post.data.tags))].sort() as string[];
-
-// Serialize posts data for JavaScript
-const postsData = sortedPosts.map((post: CollectionEntry<'blog'>) => ({
-  slug: post.slug,
-  title: post.data.title,
-  description: post.data.description,
-  pubDate: post.data.pubDate.toISOString(),
-  tags: post.data.tags,
-}));
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
+);
 ---
 
-<Layout title="Blog - Will Downey" description="Thoughts on iOS development, SwiftUI, and mobile engineering">
-  <Header />
-  
-  <main class="flex-1 py-16">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="max-w-4xl mx-auto">
-        <!-- Header -->
-        <div class="mb-12">
-          <h1 class="text-4xl font-bold mb-4">Blog</h1>
-          <p class="text-lg text-muted-foreground">
-            Thoughts on iOS development, SwiftUI architecture, platform engineering, and mobile best practices.
-          </p>
-        </div>
-        
-        <!-- Tags Filter -->
-        {allTags.length > 0 && (
-          <div class="mb-12">
-            <div class="flex items-center justify-between mb-3">
-              <h2 class="text-sm font-medium text-muted-foreground uppercase tracking-wider">Topics</h2>
-              <button
-                id="clear-filter"
-                class="hidden text-sm text-primary hover:text-primary/80 font-medium transition-colors"
-              >
-                Clear filter
-              </button>
-            </div>
-            <div class="flex flex-wrap gap-2" id="tags-container">
-              {allTags.map((tag: string) => (
-                <button
-                  class="tag-filter inline-flex items-center px-4 py-1.5 text-sm font-medium border rounded-full transition-all duration-200 cursor-pointer hover:shadow-sm"
-                  data-tag={tag}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-        
-        <!-- Filter Status -->
-        <div id="filter-status" class="hidden mb-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
-          <p class="text-sm text-muted-foreground">
-            Showing posts tagged with <span id="active-filter" class="font-semibold text-primary"></span>
-            <span id="result-count" class="ml-2"></span>
-          </p>
-        </div>
-        
-        <!-- Posts List -->
-        <div class="space-y-8" id="posts-container">
-          {sortedPosts.map((post: CollectionEntry<'blog'>) => (
-            <article 
-              class="post-item group p-6 rounded-xl border border-border bg-card hover:border-primary/50 transition-colors"
-              data-tags={JSON.stringify(post.data.tags)}
-            >
-              <div class="flex flex-wrap gap-2 mb-3">
-                {post.data.tags.map((tag: string) => (
-                  <span class="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <h2 class="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
-                <a href={`/blog/${post.slug}/`}>
-                  {post.data.title}
-                </a>
-              </h2>
-              <p class="text-muted-foreground mb-4">
-                {post.data.description}
-              </p>
-              <div class="flex items-center gap-4 text-sm text-muted-foreground">
-                <time datetime={post.data.pubDate.toISOString()}>
-                  {post.data.pubDate.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
-                <a 
-                  href={`/blog/${post.slug}/`}
-                  class="text-primary hover:text-primary/80 font-medium"
-                >
-                  Read more →
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
-        
-        <!-- Empty State -->
-        <div id="empty-state" class="hidden text-center py-20">
-          <p class="text-muted-foreground mb-4">No posts found with this tag.</p>
-          <button
-            id="empty-clear-filter"
-            class="text-sm text-primary hover:text-primary/80 font-medium transition-colors"
-          >
-            Clear filter
-          </button>
-        </div>
-        
-        <!-- No Posts State (initial) -->
-        {sortedPosts.length === 0 && (
-          <div class="text-center py-20">
-            <p class="text-muted-foreground mb-4">No posts yet.</p>
-            <p class="text-sm text-muted-foreground">
-              Check back soon for articles on iOS development, SwiftUI, and mobile engineering.
-            </p>
-          </div>
-        )}
-        
-        <!-- RSS Link -->
-        <div class="mt-12 pt-8 border-t border-border">
-          <a 
-            href="/rss.xml"
-            class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
-            </svg>
-            Subscribe via RSS
-          </a>
-        </div>
+<BaseLayout title="Blog" description="Essays, notes, and technical writing.">
+  <section class="section">
+    <div class="shell">
+      <SectionHeader
+        eyebrow="Blog"
+        title="Essays, notes, and technical writing"
+        copy="A structured archive for longer thoughts, implementation notes, and the occasional sharp opinion."
+      />
+      <div class="posts">
+        {
+          posts.map((post) => (
+            <PostCard
+              href={`/blog/${post.id}/`}
+              title={post.data.title}
+              summary={post.data.summary}
+              date={post.data.publishedAt}
+              tags={post.data.tags}
+            />
+          ))
+        }
       </div>
     </div>
-  </main>
-  
-  <Footer />
-  
-  <script define:vars={{ postsData }}>
-    // Get DOM elements
-    const tagButtons = document.querySelectorAll('.tag-filter');
-    const postItems = document.querySelectorAll('.post-item');
-    const clearFilterBtn = document.getElementById('clear-filter');
-    const emptyClearFilterBtn = document.getElementById('empty-clear-filter');
-    const filterStatus = document.getElementById('filter-status');
-    const activeFilterSpan = document.getElementById('active-filter');
-    const resultCountSpan = document.getElementById('result-count');
-    const emptyState = document.getElementById('empty-state');
-    const postsContainer = document.getElementById('posts-container');
-    
-    let currentFilter = null;
-    
-    // Function to filter posts
-    function filterPosts(tag) {
-      currentFilter = tag;
-      let visibleCount = 0;
-      
-      postItems.forEach(item => {
-        const itemTags = JSON.parse(item.dataset.tags || '[]');
-        if (itemTags.includes(tag)) {
-          item.style.display = '';
-          visibleCount++;
-        } else {
-          item.style.display = 'none';
-        }
-      });
-      
-      // Update UI
-      updateFilterUI(tag, visibleCount);
-      
-      // Update URL
-      const url = new URL(window.location);
-      url.searchParams.set('tag', tag);
-      window.history.pushState({}, '', url);
+  </section>
+</BaseLayout>
+
+<style>
+  .posts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 900px) {
+    .posts {
+      grid-template-columns: 1fr;
     }
-    
-    // Function to clear filter
-    function clearFilter() {
-      currentFilter = null;
-      
-      postItems.forEach(item => {
-        item.style.display = '';
-      });
-      
-      // Update UI - remove active class from all badges
-      tagButtons.forEach(btn => {
-        btn.classList.remove('active');
-      });
-      
-      clearFilterBtn?.classList.add('hidden');
-      filterStatus?.classList.add('hidden');
-      emptyState?.classList.add('hidden');
-      postsContainer?.classList.remove('hidden');
-      
-      // Update URL
-      const url = new URL(window.location);
-      url.searchParams.delete('tag');
-      window.history.pushState({}, '', url);
-    }
-    
-    // Function to update filter UI
-    function updateFilterUI(tag, count) {
-      // Update tag buttons - active badge gets 'active' class
-      tagButtons.forEach(btn => {
-        if (btn.dataset.tag === tag) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
-      
-      // Show/hide clear button
-      clearFilterBtn?.classList.remove('hidden');
-      
-      // Update filter status
-      if (filterStatus && activeFilterSpan && resultCountSpan) {
-        filterStatus.classList.remove('hidden');
-        activeFilterSpan.textContent = tag;
-        resultCountSpan.textContent = `(${count} post${count !== 1 ? 's' : ''})`;
-      }
-      
-      // Show empty state if no results
-      if (count === 0) {
-        postsContainer?.classList.add('hidden');
-        emptyState?.classList.remove('hidden');
-      } else {
-        postsContainer?.classList.remove('hidden');
-        emptyState?.classList.add('hidden');
-      }
-    }
-    
-    // Add click handlers to tag buttons
-    tagButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const tag = button.dataset.tag;
-        if (currentFilter === tag) {
-          clearFilter();
-        } else {
-          filterPosts(tag);
-        }
-      });
-    });
-    
-    // Add click handlers to clear buttons
-    clearFilterBtn?.addEventListener('click', clearFilter);
-    emptyClearFilterBtn?.addEventListener('click', clearFilter);
-    
-    // Check URL for existing filter on page load
-    const urlParams = new URLSearchParams(window.location.search);
-    const initialTag = urlParams.get('tag');
-    if (initialTag) {
-      filterPosts(initialTag);
-    }
-  </script>
-</Layout>
+  }
+</style>

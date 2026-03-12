@@ -1,119 +1,114 @@
 ---
-import ThemeToggle from './ThemeToggle.astro';
+import { siteConfig } from "../data/site";
 
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/talks', label: 'Talks' },
-];
+const pathname = Astro.url.pathname;
 ---
 
-<header class="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex h-14 items-center justify-between">
-      <!-- Logo -->
-      <a href="/" class="flex items-center gap-2 text-lg font-semibold">
-        <span class="text-primary">WD</span>
-        <span class="hidden sm:inline text-muted-foreground">Will Downey</span>
-      </a>
-      
-      <!-- Desktop Navigation -->
-      <nav class="hidden md:flex items-center gap-6">
-        {navLinks.map(link => (
-          <a
-            href={link.href}
-            class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {link.label}
-          </a>
-        ))}
-        <ThemeToggle />
-      </nav>
-      
-      <!-- Mobile Menu Button -->
-      <button
-        type="button"
-        id="mobile-menu-button"
-        class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-border bg-background hover:bg-accent transition-colors"
-        aria-label="Toggle menu"
-        aria-expanded="false"
-      >
-        <svg
-          id="menu-icon"
-          class="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"
-          />
-        </svg>
-        <svg
-          id="close-icon"
-          class="w-5 h-5 hidden"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-    </div>
-    
-    <!-- Mobile Navigation -->
-    <div
-      id="mobile-menu"
-      class="md:hidden hidden border-t border-border py-4"
-    >
-      <nav class="flex flex-col gap-2">
-        {navLinks.map(link => (
-          <a
-            href={link.href}
-            class="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
-          >
-            {link.label}
-          </a>
-        ))}
-        <div class="px-4 py-2">
-          <ThemeToggle />
-        </div>
-      </nav>
-    </div>
+<header class="site-header">
+  <div class="shell site-header__inner">
+    <a class="site-header__mark" href="/">
+      <span class="site-header__name">{siteConfig.author}</span>
+      <span class="site-header__role">Systems / Software / Writing</span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="site-header__nav">
+        {
+          siteConfig.nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class:list={{
+                  "is-active": pathname === item.href || pathname.startsWith(`${item.href}/`)
+                }}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
   </div>
 </header>
 
-<script>
-  const mobileMenuButton = document.getElementById('mobile-menu-button');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const menuIcon = document.getElementById('menu-icon');
-  const closeIcon = document.getElementById('close-icon');
-  
-  mobileMenuButton?.addEventListener('click', () => {
-    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-    
-    mobileMenuButton.setAttribute('aria-expanded', String(!isExpanded));
-    mobileMenu?.classList.toggle('hidden');
-    menuIcon?.classList.toggle('hidden');
-    closeIcon?.classList.toggle('hidden');
-  });
-  
-  // Close menu on link click
-  mobileMenu?.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      mobileMenuButton?.setAttribute('aria-expanded', 'false');
-      mobileMenu?.classList.add('hidden');
-      menuIcon?.classList.remove('hidden');
-      closeIcon?.classList.add('hidden');
-    });
-  });
-</script>
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding: 1rem 0;
+    backdrop-filter: blur(16px);
+    background: linear-gradient(180deg, rgba(6, 12, 10, 0.94), rgba(6, 12, 10, 0.58));
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .site-header__mark {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .site-header__name {
+    font-family: var(--font-sans);
+    font-size: 1.15rem;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .site-header__role {
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .site-header__nav {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-header__nav a {
+    display: inline-flex;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    transition:
+      transform 180ms ease,
+      background 180ms ease,
+      color 180ms ease;
+  }
+
+  .site-header__nav a:hover,
+  .site-header__nav a.is-active {
+    color: var(--color-ink);
+    background: rgba(116, 242, 139, 0.12);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 720px) {
+    .site-header__inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .site-header__nav {
+      flex-wrap: wrap;
+    }
+  }
+</style>

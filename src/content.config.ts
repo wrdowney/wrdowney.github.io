@@ -1,31 +1,40 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection, z } from "astro:content";
 
 const blog = defineCollection({
-  type: 'content',
+  type: "content",
   schema: z.object({
     title: z.string(),
-    description: z.string(),
-    pubDate: z.coerce.date(),
-    updatedDate: z.coerce.date().optional(),
-    heroImage: z.string().optional(),
+    summary: z.string(),
+    publishedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
     featured: z.boolean().default(false),
-  }),
+    heroImage: z.string().optional(),
+    series: z.string().optional(),
+    canonicalUrl: z.string().url().optional()
+  })
 });
 
-const talks = defineCollection({
-  type: 'content',
+const projects = defineCollection({
+  type: "content",
   schema: z.object({
     title: z.string(),
-    description: z.string(),
-    date: z.coerce.date(),
-    venue: z.string(),
-    location: z.string().optional(),
-    slides: z.string().url().optional(),
-    video: z.string().url().optional(),
-    tags: z.array(z.string()).default([]),
-    upcoming: z.boolean().default(false),
-  }),
+    summary: z.string(),
+    year: z.number(),
+    status: z.enum(["Active", "Archived", "Exploration"]),
+    stack: z.array(z.string()).default([]),
+    links: z
+      .array(
+        z.object({
+          label: z.string(),
+          href: z.string().url()
+        })
+      )
+      .default([]),
+    featured: z.boolean().default(false),
+    heroImage: z.string().optional()
+  })
 });
 
-export const collections = { blog, talks };
+export const collections = { blog, projects };
