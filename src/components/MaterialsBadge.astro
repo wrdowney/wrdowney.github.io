@@ -1,0 +1,31 @@
+---
+type Props = {
+  href: string;
+  label?: string;
+};
+
+const { href, label = "Materials" } = Astro.props;
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="noreferrer"
+  class="not-prose inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-black/5 px-2.5 py-1 text-xs font-medium text-black/75 no-underline transition-colors duration-300 ease-in-out hover:border-black/15 hover:bg-black/10 hover:text-black dark:border-white/15 dark:bg-white/5 dark:text-white/80 dark:hover:border-white/25 dark:hover:bg-white/10 dark:hover:text-white"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="size-3.5 shrink-0"
+    aria-hidden="true"
+  >
+    <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"></path>
+    <path d="M14 2v5h5"></path>
+  </svg>
+  {label}
+</a>
